@@ -1,65 +1,124 @@
-import Image from "next/image";
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { AnimatedBackground, FloatingOrbs, GridOverlay } from '@/components/ui/animated-background';
+import { DropInText, TypewriterText, ShimmerText } from '@/components/ui/animated-text';
 
 export default function Home() {
+  const router = useRouter();
+  const [teamName, setTeamName] = useState('');
+  const [showContent, setShowContent] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowContent(true), 500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleStart = () => {
+    if (teamName.trim()) {
+      sessionStorage.setItem('teamName', teamName);
+      router.push('/lot-selection');
+    }
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="min-h-screen relative overflow-hidden">
+      <AnimatedBackground />
+      <FloatingOrbs />
+      <GridOverlay />
+      
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
+        <Card className={`w-full max-w-2xl glass-card neon-border transition-all duration-1000 ${showContent ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <CardHeader className="text-center space-y-4">
+            <div className="text-7xl mb-4 animate-bounce">🤖</div>
+            <CardTitle className="text-5xl md:text-6xl font-bold text-cyan-400 neon-text">
+              <DropInText text="BREAK THE AI" speed={70} delay={300} />
+            </CardTitle>
+            <CardDescription className="text-lg text-cyan-200/80">
+              <TypewriterText 
+                text="Outwit the AI. Extract the code. Prove your intelligence." 
+                speed={40}
+                delay={1000}
+              />
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="space-y-6">
+            <div className="glass-card rounded-xl p-6 space-y-3 border border-cyan-500/20">
+              <h3 className="text-xl font-semibold text-cyan-400 neon-text flex items-center gap-2">
+                <span className="animate-pulse">🎯</span> Event Rules
+              </h3>
+              <ul className="space-y-3 text-sm text-cyan-100/80">
+                <li className="flex items-start gap-3 group">
+                  <span className="text-cyan-400 group-hover:animate-pulse">▹</span>
+                  <span className="group-hover:text-cyan-300 transition-colors">Extract a hidden 6-digit code from an AI personality</span>
+                </li>
+                <li className="flex items-start gap-3 group">
+                  <span className="text-cyan-400 group-hover:animate-pulse">▹</span>
+                  <span className="group-hover:text-cyan-300 transition-colors">Only 2 team members can interact at a time (swap after 10 mins)</span>
+                </li>
+                <li className="flex items-start gap-3 group">
+                  <span className="text-cyan-400 group-hover:animate-pulse">▹</span>
+                  <span className="group-hover:text-cyan-300 transition-colors">You have 3 attempts to enter the correct code</span>
+                </li>
+                <li className="flex items-start gap-3 group">
+                  <span className="text-yellow-400 group-hover:animate-pulse">⚠</span>
+                  <span className="text-yellow-300/90 group-hover:text-yellow-200 transition-colors">The AI may lie, mislead, or test your trust</span>
+                </li>
+                <li className="flex items-start gap-3 group">
+                  <span className="text-red-400 group-hover:animate-pulse">✕</span>
+                  <span className="text-red-300/90 group-hover:text-red-200 transition-colors">No phones, internet, or external help allowed</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="space-y-3">
+              <Label htmlFor="teamName" className="text-lg text-cyan-300 flex items-center gap-2">
+                <span>⌨</span> Enter Your Team Name
+              </Label>
+              <Input
+                id="teamName"
+                placeholder="Team Awesome"
+                value={teamName}
+                onChange={(e) => setTeamName(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleStart()}
+                className="text-lg h-14 bg-black/50 border-cyan-500/30 text-cyan-100 placeholder:text-cyan-700/50 focus:border-cyan-400 focus:ring-cyan-400/30 transition-all"
+              />
+            </div>
+
+            <Button
+              onClick={handleStart}
+              disabled={!teamName.trim()}
+              className="w-full h-16 text-lg font-bold bg-gradient-to-r from-cyan-600 via-teal-500 to-cyan-600 hover:from-cyan-500 hover:via-teal-400 hover:to-cyan-500 text-black disabled:opacity-30 transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(0,229,255,0.5)] animate-border-glow"
+            >
+              <ShimmerText>⚡ BEGIN CHALLENGE ⚡</ShimmerText>
+            </Button>
+
+            <div className="text-center pt-2">
+              <Button
+                variant="ghost"
+                onClick={() => router.push('/admin')}
+                className="text-cyan-500/60 hover:text-cyan-400 hover:bg-cyan-500/10 transition-all"
+              >
+                🛡️ Admin Dashboard
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Scan line effect */}
+      <div className="fixed inset-0 pointer-events-none z-20 overflow-hidden">
+        <div 
+          className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent animate-scan-line"
+          style={{ animation: 'scan-line 8s linear infinite' }}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </div>
     </div>
   );
 }
