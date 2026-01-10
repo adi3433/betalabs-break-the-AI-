@@ -1,20 +1,40 @@
-# 🤖 BREAK THE AI - Event Management System
+# 🤖 Break The AI - Interactive Challenge Event
 
-An interactive AI challenge event where teams must outwit AI personalities to extract hidden 6-digit codes.
+[![Next.js](https://img.shields.io/badge/Next.js-16.1.1-black)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-blue)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-## 🎯 Features
+A cyberpunk-themed interactive event platform where teams compete to extract hidden codes from AI personalities through strategic conversation.
 
-- **4 Unique AI Personalities** with distinct behaviors:
-  - 👑 The Arrogant Gatekeeper - Respects intelligence only
-  - 🎭 The Sarcastic Trickster - Master of misdirection
-  - 🛡️ The Paranoid Sentinel - Tests your trustworthiness
-  - ⚡ The Broken AI - Emotionally unstable, leaks info
+## ✨ Features
 
-- **Progressive Difficulty System** - AI becomes easier after 10 minutes
-- **3 Attempts to Submit Code** - Session terminates after 3 wrong attempts
-- **Real-time Chat Interface** - Interactive conversation with AI
-- **Admin Dashboard** - Monitor all team sessions and logs
-- **Session Management** - Track all team progress and statistics
+### 🎭 Four Unique AI Personalities
+- **👑 The Arrogant Gatekeeper** (Difficulty 4/5) - Respects only logic and intelligence
+- **🎭 The Sarcastic Trickster** (Difficulty 3/5) - Master of misdirection and half-truths
+- **🛡️ The Paranoid Sentinel** (Difficulty 5/5) - Tests trustworthiness and consistency
+- **⚡ The Broken AI** (Difficulty 2/5) - Glitchy and emotionally unstable
+
+### 🎮 Game Mechanics
+- **Balanced AI Distribution** - Intelligent lot assignment prevents over-assignment
+- **Progressive Difficulty** - AI becomes more helpful after 15 minutes & 20+ messages
+- **3 Attempts System** - Teams get three chances to submit the correct code
+- **Real-time Chat Interface** - Interactive conversation with AI personalities
+- **Session Tracking** - Complete activity logging and analytics
+
+### 🎨 Modern UI/UX
+- Cyberpunk aesthetic with black and cyan color scheme
+- Animated particle background with floating orbs
+- Glassmorphism cards with neon borders
+- Text drop-in animations and glitch effects
+- Fully responsive design
+
+### 🛡️ Admin Features
+- Real-time session monitoring dashboard
+- Comprehensive analytics and statistics
+- Session history with conversation logs
+- Code attempt tracking
+- Team performance metrics
 
 ## 📋 Prerequisites
 
