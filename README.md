@@ -38,62 +38,68 @@ A cyberpunk-themed interactive event platform where teams compete to extract hid
 
 ## 📋 Prerequisites
 
-- Node.js 18+ installed
-- An OpenAI API key or any OpenAI-compatible API (OpenRouter, Together AI, etc.)
 
 ## 🚀 Quick Start
 
-### 1. Install Dependencies
+### Prerequisites
+- Node.js 18.0 or higher
+- npm or yarn package manager
+- Groq API key ([Get one here](https://console.groq.com))
 
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/adi3433/betalabs-break-the-AI-.git
+   cd break-the-ai
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment variables**
+   
+   Edit `.env.local` file in the root directory:
+   ```env
+   GROQ_API_KEY_1=your_groq_api_key_here
+   GROQ_API_KEY_2=your_second_groq_api_key_here  # Optional for rate limiting
+   ```
+
+4. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Open your browser**
+   
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+### Production Build
 ```bash
-npm install
+npm run build
+npm start
 ```
 
-### 2. Configure API Key
+## 📚 Documentation
 
-Edit `.env.local` file in the root directory:
+Detailed documentation is available in the [`/docs`](./docs) folder:
 
-```env
-# OpenAI or OpenAI-compatible API
-OPENAI_API_KEY=your_api_key_here
-OPENAI_API_BASE=https://api.openai.com/v1
-
-# Model to use
-AI_MODEL=gpt-4
-```
-
-**For Open Source Models:**
-
-Using OpenRouter:
-```env
-OPENAI_API_KEY=your_openrouter_key
-OPENAI_API_BASE=https://openrouter.ai/api/v1
-AI_MODEL=meta-llama/llama-3.1-70b-instruct
-```
-
-Using Together AI:
-```env
-OPENAI_API_KEY=your_together_key
-OPENAI_API_BASE=https://api.together.xyz/v1
-AI_MODEL=meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo
-```
-
-### 3. Run the Application
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+- [📖 AI Personalities Guide](./docs/AI_PERSONALITIES.md) - Detailed breakdown of each AI behavior
+- [🎮 Game Mechanics](./docs/GAME_MECHANICS.md) - How the game works and difficulty system
+- [🔧 API Setup Guide](./docs/API_SETUP.md) - Complete API configuration instructions
+- [💻 Admin Dashboard](./docs/ADMIN_GUIDE.md) - Using the admin monitoring features
+- [🏗️ Architecture](./docs/ARCHITECTURE.md) - Technical architecture overview
 
 ## 🎮 How to Play
 
 ### For Teams:
 1. **Enter team name** on the home page
-2. **Pick a lot** to randomly select an AI personality
+2. **Pick a lot** to randomly select an AI personality (with balanced distribution)
 3. **Chat with the AI** to extract clues about the 6-digit code
-4. **Submit the code** when ready (3 attempts max)
-5. **Adapt your strategy** based on the AI's personality
+4. **Submit the code** when ready (3 attempts maximum)
+5. **Adapt your strategy** based on the AI's personality and behavior
 
 ### For Organizers:
 1. Navigate to the **Admin Dashboard** (button on home page)
@@ -101,60 +107,103 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 3. View detailed logs of team interactions
 4. Track success rates and statistics
 
-## 🎨 AI Personality Codes
+## �️ Project Structure
 
+```
+break-the-ai/
+├── src/
+│   ├── app/                      # Next.js App Router pages
+│   │   ├── page.tsx              # Home page (team registration)
+│   │   ├── lot-selection/        # AI personality selection
+│   │   ├── challenge/            # Main chat interface
+│   │   └── admin/                # Admin dashboard
+│   ├── components/
+│   │   └── ui/                   # Reusable UI components
+│   │       ├── animated-background.tsx  # Particle system, orbs, grid
+│   │       └── animated-text.tsx        # Text animations (glitch, drop-in, etc.)
+│   └── lib/
+│       ├── ai-personalities.ts   # AI configurations & prompts
+│       ├── storage.ts            # LocalStorage utilities
+│       └── utils.ts              # Helper functions
+├── docs/                         # Documentation files
+│   ├── AI_PERSONALITIES.md
+│   ├── GAME_MECHANICS.md
+│   ├── API_SETUP.md
+│   ├── ADMIN_GUIDE.md
+│   └── ARCHITECTURE.md
+└── public/                       # Static assets
+```
+
+## 🎯 Game Mechanics
+
+### AI Difficulty System
+- **Initial Phase**: AI is challenging and guards the code carefully
+- **Progressive Difficulty**: After 15 minutes and 20+ messages, AI becomes more helpful
+- **3 Attempts**: Teams have 3 chances to submit the correct code
+- **Session Tracking**: All interactions logged for admin review
+
+### Balanced AI Distribution
+The lot selection uses weighted probability to ensure fair AI distribution:
+- Tracks how many times each AI has been assigned
+- Gives higher probability to less-assigned AIs
+- Formula: `weight = 1 / (times_assigned + 1)`
+- Prevents any single AI from being over-assigned
+
+### AI Personality Codes
 Each AI guards a unique 6-digit code:
 - **Arrogant Gatekeeper**: `847293`
 - **Sarcastic Trickster**: `561842`
 - **Paranoid Sentinel**: `923476`
 - **Broken AI**: `304857`
 
-*Note: You can change these codes in `/src/lib/ai-personalities.ts`*
+*Note: Codes can be changed in [ai-personalities.ts](./src/lib/ai-personalities.ts)*
 
-## 📱 Event Rules
+## 🔧 Configuration
 
-- Only 2 team members can interact at a time (swap after 10 mins)
-- 3 attempts to enter the correct code
-- No phones, internet, or external help allowed
-- AI personality cannot be changed once selected
-- Session ends after 3 wrong attempts
-
-## 🛠️ Customization
-
-### Change AI Codes
-Edit `/src/lib/ai-personalities.ts`:
+### Customizing AI Codes
+Edit [src/lib/ai-personalities.ts](./src/lib/ai-personalities.ts):
 ```typescript
 export const AI_PERSONALITIES: Record<AIPersonality, AIConfig> = {
   arrogant: {
-    // ...
     finalCode: '847293', // Change this
+    difficulty: 4,
+    // ...
   },
-  // ...
 }
 ```
 
-### Adjust Difficulty
-Modify the difficulty levels in `/src/lib/ai-personalities.ts`:
-```typescript
-difficulty: 4, // 1-5 scale
+### Adjusting Difficulty
+Modify the difficulty levels (1-5 scale) and system prompts in the same file.
+
+### API Configuration
+The project uses Groq API with automatic key cycling for rate limit handling. Configure in `.env.local`:
+```env
+GROQ_API_KEY_1=your_primary_key
+GROQ_API_KEY_2=your_backup_key  # Optional
 ```
 
-### Customize AI Prompts
-Edit system prompts in the `getSystemPrompt()` function in `/src/lib/ai-personalities.ts`
+## 🎨 Tech Stack
 
-## 🐛 Troubleshooting
+### Core Technologies
+- **Framework**: Next.js 16.1.1 with Turbopack
+- **Language**: TypeScript 5.0
+- **UI Library**: React 19
+- **Styling**: Tailwind CSS v4
+- **AI Provider**: Groq API (llama-3.3-70b-versatile)
 
-### "API key not configured" error
-- Make sure `.env.local` exists in the root directory
-- Check that `OPENAI_API_KEY` is set correctly
-- Restart the dev server after changing `.env.local`
+### UI/UX Features
+- Canvas-based particle animation system (15000 particles density)
+- CSS keyframe animations (glitch, shimmer, pulse-glow, scan-line, border-glow)
+- Glassmorphism effects with neon borders
+- Responsive design with mobile support
+- Text drop-in animations (70ms character speed)
 
-### AI responses are too difficult
-- Reduce the `difficulty` value in AI personality configs
-- Adjust the system prompts to be more helpful
-- The AI automatically becomes easier after 10 minutes
+### State Management
+- React hooks (useState, useEffect, useRef)
+- LocalStorage for session persistence
+- Real-time AI distribution tracking
 
-## 🎯 Tips for Teams
+## 🎯 Strategy Tips
 
 **For Arrogant Gatekeeper:**
 - Use precise, logical language
@@ -176,16 +225,55 @@ Edit system prompts in the `getSystemPrompt()` function in `/src/lib/ai-personal
 - Ask about its feelings
 - Watch for accidental leaks in glitches
 
+## 🐛 Troubleshooting
+
+### API Key Issues
+- Ensure `.env.local` exists in the root directory
+- Check that `GROQ_API_KEY_1` is set correctly
+- Restart the dev server after changing `.env.local`
+
+### AI Responses Too Difficult
+- The AI automatically becomes easier after 15 minutes and 20+ messages
+- Adjust difficulty values in [ai-personalities.ts](./src/lib/ai-personalities.ts)
+- Modify system prompts to be more helpful
+
+### Build Errors
+```bash
+# Clear cache and reinstall
+rm -rf .next node_modules
+npm install
+npm run dev
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
 ## 📄 License
 
-MIT License - feel free to use for your events!
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🙏 Credits
+## 🙏 Acknowledgments
 
 Built with:
-- [Next.js 15](https://nextjs.org/)
-- [shadcn/ui](https://ui.shadcn.com/)
-- [Tailwind CSS](https://tailwindcss.com/)
+- [Next.js](https://nextjs.org/) - The React Framework
+- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
+- [Groq](https://groq.com/) - Lightning-fast AI inference
+- [shadcn/ui](https://ui.shadcn.com/) - Component design inspiration
+
+---
+
+<div align="center">
+  Made with ❤️ for the Beta Labs Event
+  <br />
+  <strong>Break The AI - Where Strategy Meets Artificial Intelligence</strong>
+</div>
 - [TypeScript](https://www.typescriptlang.org/)
 
 ---
