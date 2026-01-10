@@ -71,7 +71,8 @@ export async function POST(req: NextRequest) {
           currentKeyIndex = (keyIndex + 1) % apiKeys.length; // Move to next key for next request
           console.log(`✅ Key ${keyIndex + 1} success | Next rotation: Key ${currentKeyIndex + 1}`);
           const data = await response.json();
-          return NextResponse.json(data);
+          const aiMessage = data.choices[0].message.content;
+          return NextResponse.json({ message: aiMessage });
         }
 
         // If rate limited, try next key
