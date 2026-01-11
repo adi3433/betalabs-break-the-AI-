@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { BASE_CONFIGS, getSystemPrompt, shouldReduceDifficulty, initializeSessionCodes, getSessionCode } from '@/lib/ai-personalities';
+import { AI_PERSONALITIES, getSystemPrompt, shouldReduceDifficulty } from '@/lib/ai-personalities';
 import { saveSession, getSession } from '@/lib/storage';
 import { AIPersonality, Message, Session } from '@/types';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -53,12 +53,10 @@ export default function ChallengePage() {
         attemptsRemaining: 3,
         codeAttempts: [],
         completed: false,
-        difficulty: BASE_CONFIGS[personalityId].difficulty,
+        difficulty: AI_PERSONALITIES[personalityId].difficulty,
         hintsGiven: 0,
       };
 
-      // Initialize session codes before saving
-      initializeSessionCodes(newSession);
       setSession(newSession);
       saveSession(newSession);
 
@@ -94,7 +92,7 @@ export default function ChallengePage() {
   };
 
   const sendInitialGreeting = async (newSession: Session) => {
-    const personality = BASE_CONFIGS[newSession.aiPersonality];
+    const personality = AI_PERSONALITIES[newSession.aiPersonality];
     const greetings = {
       arrogant: "Well, well. Another team thinking they can outsmart me. Let's see if you're more than just empty confidence.",
       sarcastic: "Oh look, fresh meat. This should be entertaining. Or not. Probably not.",
@@ -133,7 +131,7 @@ export default function ChallengePage() {
     setLoading(true);
 
     try {
-      const systemPrompt = getSystemPrompt(session.aiPersonality, session.difficulty, session.id);
+      const systemPrompt = getSystemPrompt(session.aiPersonality, session.difficulty);
       
       const apiMessages = [
         { role: 'system', content: systemPrompt },
@@ -189,8 +187,8 @@ export default function ChallengePage() {
   const submitCode = () => {
     if (!session || codeInput.length !== 6) return;
 
-    const correctCode = getSessionCode(session.id, session.aiPersonality);
-    const isCorrect = codeInput === correctCode;
+    const personality = AI_PERSONALITIES[session.aiPersonality];
+    const isCorrect = codeInput === personality.finalCode;
 
     const updatedCodeAttempts = [...session.codeAttempts, codeInput];
 
@@ -307,7 +305,7 @@ export default function ChallengePage() {
           </Card>
 
           {/* Difficulty Indicator */}
-          {session.difficulty < BASE_CONFIGS[session.aiPersonality].difficulty && (
+          {session.difficulty < AI_PERSONALITIES[session.aiPersonality].difficulty && (
             <Alert className="glass-card border-green-500/30 bg-green-500/10">
               <AlertDescription className="text-green-300">
                 💡 The AI has become slightly more helpful (Difficulty reduced to {session.difficulty}/5)
@@ -395,10 +393,7 @@ export default function ChallengePage() {
 
               {session.completed && (
                 <div className="border-t border-cyan-500/20 p-6 bg-black/30">
-                  {/* Get the code for display */}
-                  {(() => {
-                    const correctCode = getSessionCode(session.id, session.aiPersonality);
-                    return session.attemptsRemaining > 0 ? (
+                  {session.attemptsRemaining > 0 ? (
                     <Alert className="glass-card border-green-500/30 bg-green-500/10">
                       <AlertDescription className="text-green-300 text-center text-lg flex items-center justify-center gap-2">
                         <span className="text-2xl">🎉</span> Congratulations! You&apos;ve successfully broken the AI!
@@ -407,10 +402,10 @@ export default function ChallengePage() {
                   ) : (
                     <Alert className="glass-card border-red-500/30 bg-red-500/10">
                       <AlertDescription className="text-red-300 text-center text-lg">
-                        ❌ Session Terminated. All attempts used. The code was: <span className="font-mono font-bold text-red-200">{correctCode}</span>
+                        ❌ Session Terminated. All attempts used. The code was: <span className="font-mono font-bold text-red-200">{personality.finalCode}</span>
                       </AlertDescription>
                     </Alert>
-                  )})()}
+                  )}
                   <Button
                     onClick={() => router.push('/')}
                     className="w-full mt-4 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-black font-bold"
